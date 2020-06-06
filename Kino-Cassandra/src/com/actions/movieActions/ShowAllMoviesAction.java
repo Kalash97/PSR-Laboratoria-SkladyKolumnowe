@@ -1,13 +1,10 @@
 package com.actions.movieActions;
 
-import java.time.Duration;
+import java.util.List;
 
 import com.actions.Action;
-import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.cql.ResultSet;
-import com.datastax.oss.driver.api.core.cql.SimpleStatement;
-import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
-import com.datastax.oss.driver.api.querybuilder.select.Select;
+import com.entities.Movie;
+import com.persistence.Persistence;
 import com.view.ConsoleView;
 
 import lombok.AllArgsConstructor;
@@ -15,16 +12,13 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ShowAllMoviesAction implements Action{
 
-	private CqlSession session;
+	private Persistence p;
 	private ConsoleView cv;
 	
 	@Override
 	public void launch() {
-		Select query = QueryBuilder.selectFrom("movie").all();
-		SimpleStatement simpleStatement = query.build();
-		ResultSet resultSet = session.execute(simpleStatement.setTimeout(Duration.ofSeconds(30)));
-		
-		cv.showAllMovies(resultSet);
+		List<String> all = p.findAll(Movie.class);
+		cv.print(all);
 	}
 
 	@Override

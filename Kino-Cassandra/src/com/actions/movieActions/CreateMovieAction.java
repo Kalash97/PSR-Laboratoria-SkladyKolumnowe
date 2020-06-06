@@ -1,11 +1,8 @@
 package com.actions.movieActions;
 
-import java.time.Duration;
-
 import com.actions.Action;
-import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
-import com.datastax.oss.driver.api.querybuilder.insert.Insert;
+import com.entities.Movie;
+import com.persistence.Persistence;
 import com.view.ConsoleView;
 
 import lombok.AllArgsConstructor;
@@ -13,24 +10,22 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CreateMovieAction implements Action{
 
-	private CqlSession session;
+	private Persistence p;
 	private ConsoleView cv;
 	
 	@Override
 	public void launch() {
-		cv.print("podaj ID:");
-		String id = cv.getValidInt();
-		cv.print("podaj tytu³:");
-		String title = cv.getValidString();
-		cv.print("podaj czas trwania:");
-		String durationTimeInMinutes = cv.getValidInt();
+		Integer id = cv.getValidInt("podaj ID");
+		String title = cv.read("podaj tytu³");
+		Integer durationTimeInMinutes = cv.getValidInt("podaj czas trwania:");
 		
-		Insert insert = QueryBuilder.insertInto("movie")
-			.value("id", QueryBuilder.raw(id))
-			.value("title", QueryBuilder.raw( title))
-			.value("durationTimeInMinutes", QueryBuilder.raw(durationTimeInMinutes));
+		Movie movie = new Movie();
 		
-		session.execute(insert.build().setTimeout(Duration.ofSeconds(30)));
+		movie.setId(id);
+		movie.setTitle(title);
+		movie.setDurationTimeInMinutes(durationTimeInMinutes);
+		
+		p.save(movie);
 	}
 
 	@Override

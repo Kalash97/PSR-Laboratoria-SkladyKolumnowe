@@ -19,8 +19,8 @@ public class CreateSeanceAction implements Action{
 	@Override
 	public void launch() {
 		cv.print("podaj ID:");
-		String id = cv.getValidInt();
-		String priceOfTicket = cv.getValidDouble("podaj cenê biletu:");
+		String id = cv.getValidInt("podaj ID").toString();
+		String priceOfTicket = cv.getValidDouble("podaj cenê biletu:").toString();
 		
 		Insert insert = QueryBuilder.insertInto("seance")
 			.value("id", QueryBuilder.raw(id))

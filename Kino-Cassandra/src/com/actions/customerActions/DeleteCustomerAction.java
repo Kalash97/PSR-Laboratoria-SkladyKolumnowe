@@ -1,11 +1,8 @@
 package com.actions.customerActions;
 
-import java.time.Duration;
-
 import com.actions.Action;
-import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
-import com.datastax.oss.driver.api.querybuilder.delete.Delete;
+import com.entities.Customer;
+import com.persistence.Persistence;
 import com.view.ConsoleView;
 
 import lombok.AllArgsConstructor;
@@ -13,19 +10,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class DeleteCustomerAction implements Action{
 
-	private CqlSession session;
+	private Persistence p;
 	private ConsoleView cv;
 	
 	@Override
 	public void launch() {
-		cv.print("podaj ID");
-		int id = Integer.parseInt(cv.getValidInt());
+				
+		int id = cv.getValidInt("podaj ID");
 		
-		Delete delete = QueryBuilder.deleteFrom("customer")
-				.whereColumn("id")
-				.isEqualTo(QueryBuilder.literal(id));
-		
-		session.execute(delete.build().setTimeout(Duration.ofSeconds(30)));
+		p.delete(id, Customer.class);
 	}
 
 	@Override

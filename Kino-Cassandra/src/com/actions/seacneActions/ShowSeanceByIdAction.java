@@ -20,7 +20,7 @@ public class ShowSeanceByIdAction implements Action{
 	@Override
 	public void launch() {
 		cv.print("podaj ID");
-		int id = Integer.parseInt(cv.getValidInt());
+		int id = cv.getValidInt("podaj ID");
 		
 		Select select = QueryBuilder.selectFrom("seance").all().whereColumn("id").isEqualTo(QueryBuilder.literal(id));
 		ResultSet resultSet = session.execute(select.build().setTimeout(Duration.ofSeconds(30)));

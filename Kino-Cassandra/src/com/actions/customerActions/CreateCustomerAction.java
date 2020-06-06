@@ -1,11 +1,8 @@
 package com.actions.customerActions;
 
-import java.time.Duration;
-
 import com.actions.Action;
-import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
-import com.datastax.oss.driver.api.querybuilder.insert.Insert;
+import com.entities.Customer;
+import com.persistence.Persistence;
 import com.view.ConsoleView;
 
 import lombok.AllArgsConstructor;
@@ -13,26 +10,27 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CreateCustomerAction implements Action{
 
-	private CqlSession session;
+//	private CqlSession session;
+	private Persistence p;
 	private ConsoleView cv;
 	
 	@Override
 	public void launch() {
-		cv.print("podaj ID:");
-		String id = cv.getValidInt();
+		int id = cv.getValidInt("podaj ID:");
 		
 		cv.print("Podaj imiê");
-		String name = cv.getValidString();
+		String name = cv.read();
 		
 		cv.print("podaj nazwisko");
-		String lastName = cv.getValidString();
+		String lastName = cv.read();
 		
-		Insert insert = QueryBuilder.insertInto("customer")
-			.value("id", QueryBuilder.raw(id))
-			.value("name", QueryBuilder.raw(name))
-			.value("lastName", QueryBuilder.raw(lastName));
+		Customer c = new Customer();
 		
-		session.execute(insert.build().setTimeout(Duration.ofSeconds(30)));
+		c.setId(id);
+		c.setLastName(lastName);
+		c.setName(name);
+		
+		p.save(c);
 	}
 
 	@Override

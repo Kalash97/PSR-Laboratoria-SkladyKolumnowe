@@ -18,8 +18,7 @@ public class DeleteSeanceAction implements Action{
 	
 	@Override
 	public void launch() {
-		cv.print("podaj ID");
-		int id = Integer.parseInt(cv.getValidInt());
+		int id = cv.getValidInt("podaj ID");
 		
 		Delete delete = QueryBuilder.deleteFrom("seance")
 				.whereColumn("id")
