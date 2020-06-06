@@ -58,8 +58,8 @@ public class Main {
 		
 		actions.add(new CreateMovieAction(cp, cv));
 		actions.add(new ShowAllMoviesAction(cp, cv));
-		actions.add(new ShowMovieByIdAction(session, cv));
-		actions.add(new DeleteMovieAction(session, cv));
+		actions.add(new ShowMovieByIdAction(cv, cp));
+		actions.add(new DeleteMovieAction(cp, cv));
 		actions.add(new UpdateMovieAction(cv, cp));
 		
 		actions.add(new CreateCustomerAction(cp, cv));
@@ -68,10 +68,10 @@ public class Main {
 		actions.add(new DeleteCustomerAction(cp, cv));
 		actions.add(new UpdateCustomerAction(cv, cp));
 		
-		actions.add(new CreateSeanceAction(session, cv));
-		actions.add(new ShowAllSeancesAction(session, cv));
-		actions.add(new ShowSeanceByIdAction(session, cv));
-		actions.add(new DeleteSeanceAction(session, cv));
+		actions.add(new CreateSeanceAction(cp, cv));
+		actions.add(new ShowAllSeancesAction(cp, cv));
+		actions.add(new ShowSeanceByIdAction(cv, cp));
+		actions.add(new DeleteSeanceAction(cp, cv));
 		actions.add(new UpdateSeanceAction(cv, cp));
 		
 		actions.add(new ExitAction(session, cv));

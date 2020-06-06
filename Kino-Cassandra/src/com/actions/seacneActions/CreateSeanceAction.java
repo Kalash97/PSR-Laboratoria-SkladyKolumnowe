@@ -1,11 +1,8 @@
 package com.actions.seacneActions;
 
-import java.time.Duration;
-
 import com.actions.Action;
-import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
-import com.datastax.oss.driver.api.querybuilder.insert.Insert;
+import com.entities.Seance;
+import com.persistence.Persistence;
 import com.view.ConsoleView;
 
 import lombok.AllArgsConstructor;
@@ -13,21 +10,21 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CreateSeanceAction implements Action{
 
-	private CqlSession session;
+	private Persistence p;
 	private ConsoleView cv;
 	
 	@Override
 	public void launch() {
-		cv.print("podaj ID:");
-		String id = cv.getValidInt("podaj ID").toString();
-		String priceOfTicket = cv.getValidDouble("podaj cenê biletu:").toString();
+		Integer id = cv.getValidInt("podaj ID");
+		Double priceOfTicket = cv.getValidDouble("podaj cenê biletu:");
 		
-		Insert insert = QueryBuilder.insertInto("seance")
-			.value("id", QueryBuilder.raw(id))
-			.value("priceOfTicket", QueryBuilder.raw(priceOfTicket));
+		Seance seance = new Seance();
 		
-		session.execute(insert.build().setTimeout(Duration.ofSeconds(30)));
+		seance.setId(id);
+		seance.setPriceOfTicket(priceOfTicket);
 
+		p.save(seance);
+		
 	}
 
 	@Override

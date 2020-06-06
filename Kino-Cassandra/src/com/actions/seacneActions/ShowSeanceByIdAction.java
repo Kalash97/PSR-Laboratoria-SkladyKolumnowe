@@ -1,12 +1,8 @@
 package com.actions.seacneActions;
 
-import java.time.Duration;
-
 import com.actions.Action;
-import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.cql.ResultSet;
-import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
-import com.datastax.oss.driver.api.querybuilder.select.Select;
+import com.entities.Seance;
+import com.persistence.Persistence;
 import com.view.ConsoleView;
 
 import lombok.AllArgsConstructor;
@@ -14,22 +10,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ShowSeanceByIdAction implements Action{
 
-	private CqlSession session;
 	private ConsoleView cv;
+	private Persistence p;
 	
 	@Override
 	public void launch() {
-		cv.print("podaj ID");
 		int id = cv.getValidInt("podaj ID");
 		
-		Select select = QueryBuilder.selectFrom("seance").all().whereColumn("id").isEqualTo(QueryBuilder.literal(id));
-		ResultSet resultSet = session.execute(select.build().setTimeout(Duration.ofSeconds(30)));
-	
-		if (resultSet.iterator().hasNext()) {
-			cv.showAllSeances(resultSet);
-		}else {
-			cv.print("nie ma takiego seansu");
-		}
+		String result = p.findById(id, Seance.class);
+		cv.print(result);
 	}
 
 	@Override
