@@ -18,6 +18,7 @@ import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
 import com.datastax.oss.driver.api.querybuilder.delete.Delete;
 import com.datastax.oss.driver.api.querybuilder.schema.CreateKeyspace;
 import com.datastax.oss.driver.api.querybuilder.schema.CreateTable;
+import com.datastax.oss.driver.api.querybuilder.schema.Drop;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
 import com.datastax.oss.driver.api.querybuilder.update.Update;
 import com.entities.Entity;
@@ -32,7 +33,7 @@ public class CassandraPersistence implements Persistence {
 
 		CreateKeyspace createKeyspace = SchemaBuilder.createKeyspace("cinema").withSimpleStrategy(1);
 		try {
-			session.execute(createKeyspace.build().setTimeout(Duration.ofSeconds(30)));
+			session.execute(createKeyspace.build().setTimeout(Duration.ofSeconds(200)));
 		} catch (AlreadyExistsException e) {
 
 		}
@@ -43,7 +44,7 @@ public class CassandraPersistence implements Persistence {
 			CreateTable createTableMovie = SchemaBuilder.createTable("Movie").withPartitionKey("id", DataTypes.INT)
 					.withColumn("title", DataTypes.TEXT).withColumn("durationTimeInMinutes", DataTypes.INT);
 
-			session.execute(createTableMovie.build().setTimeout(Duration.ofSeconds(30)));
+			session.execute(createTableMovie.build().setTimeout(Duration.ofSeconds(200)));
 		} catch (AlreadyExistsException e) {
 
 		}
@@ -53,17 +54,27 @@ public class CassandraPersistence implements Persistence {
 					.withPartitionKey("id", DataTypes.INT).withColumn("name", DataTypes.TEXT)
 					.withColumn("lastName", DataTypes.TEXT);
 
-			session.execute(createTableCustomer.build().setTimeout(Duration.ofSeconds(30)));
+			session.execute(createTableCustomer.build().setTimeout(Duration.ofSeconds(200)));
 		} catch (AlreadyExistsException e) {
 
 		}
 
 		try {
 			CreateTable createTableSeance = SchemaBuilder.createTable("Seance").withPartitionKey("id", DataTypes.INT)
-					.withColumn("priceOfTicket", DataTypes.DOUBLE);
+					.withColumn("priceOfTicket", DataTypes.DOUBLE).withColumn("movieId", DataTypes.INT);
 
-			session.execute(createTableSeance.build().setTimeout(Duration.ofSeconds(30)));
+			session.execute(createTableSeance.build().setTimeout(Duration.ofSeconds(200)));
 		} catch (AlreadyExistsException e) {
+
+		}
+		
+		try {
+			CreateTable createTableCustomerInSeance = SchemaBuilder.createTable("CustomerInSeance").withPartitionKey("id", DataTypes.INT)
+				.withColumn("idCustomer", DataTypes.INT)
+				.withColumn("idSeance", DataTypes.INT);
+			
+			session.execute(createTableCustomerInSeance.build().setTimeout(Duration.ofSeconds(200)));
+		}catch (AlreadyExistsException e) {
 
 		}
 	}
@@ -93,7 +104,7 @@ public class CassandraPersistence implements Persistence {
 				f.setAccessible(true);
 
 				String fieldName = f.getName();
-				String value = f.get(e).toString();
+				String value = f.get(e) == null ? null : f.get(e).toString();
 
 				insert += fieldName + ",";
 				values += f.getType().equals(String.class) ? "'" + value + "'," : value + ",";
@@ -145,6 +156,10 @@ public class CassandraPersistence implements Persistence {
 					obj += f.getName() + ": " + row.getString(f.getName());
 				}
 
+				if (f.getType().equals(List.class)) {
+					obj += f.getName() + ": " + row.getList(f.getName(), Integer.class);
+				}
+
 				obj += " ";
 			}
 
@@ -183,6 +198,41 @@ public class CassandraPersistence implements Persistence {
 
 		session.execute(delete.build().setTimeout(Duration.ofSeconds(30)));
 
+	}
+
+	@Override
+	public void dropDB(String name) {
+		Drop dropKeyspace = SchemaBuilder.dropKeyspace(name);
+		session.execute(dropKeyspace.build().setTimeout(Duration.ofSeconds(30)));
+	}
+
+	@Override
+	public Integer getEntityId(Integer id, Class<? extends Entity> entity) {
+
+		Select select = QueryBuilder.selectFrom(entity.getSimpleName()).column("id")
+				.whereColumn("id").isEqualTo(QueryBuilder.literal(id));
+		
+		ResultSet resultSet = session.execute(select.build().setTimeout(Duration.ofSeconds(30)));
+
+		return resultSet.iterator().hasNext() ? id : null;
+	}
+
+	@Override
+	public boolean checkIfPresent(Integer id, Class<? extends Entity> entity) {
+		
+		Select select = QueryBuilder.selectFrom(entity.getSimpleName()).all()
+			.whereColumn("id").isEqualTo(QueryBuilder.literal(id));
+		
+		ResultSet resultSet = session.execute(select.build().setTimeout(Duration.ofSeconds(30)));
+		
+		return resultSet.iterator().hasNext() ? true : false;
+	}
+
+	
+	
+	@Override
+	public void exitProgram() {
+		session.close();
 	}
 
 }

@@ -15,4 +15,13 @@ public interface Persistence{
 	void update(Integer id, Class<? extends Entity> entity, String fieldName, Object newValue);
 
 	void delete(Integer id, Class<? extends Entity> entity);
+	
+	void dropDB(String name);
+	
+	Integer getEntityId(Integer id, Class<? extends Entity> entity);
+			
+	boolean checkIfPresent(Integer id, Class<? extends Entity> entity);
+	
+	void exitProgram();
+	
 }

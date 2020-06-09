@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.actions.Action;
+import com.actions.AddCustomerToSeanceAction;
+import com.actions.AddMovieToSeanceAction;
+import com.actions.DeleteReservationAction;
+import com.actions.DropDBAction;
 import com.actions.ExitAction;
+import com.actions.RemoveMovieFromSeanceAction;
+import com.actions.ShowAllReservationsAction;
 import com.actions.customerActions.CreateCustomerAction;
 import com.actions.customerActions.DeleteCustomerAction;
 import com.actions.customerActions.ShowAllCustomersAction;
@@ -74,7 +80,15 @@ public class Main {
 		actions.add(new DeleteSeanceAction(cp, cv));
 		actions.add(new UpdateSeanceAction(cv, cp));
 		
-		actions.add(new ExitAction(session, cv));
+		actions.add(new AddMovieToSeanceAction(cp, cv));
+		actions.add(new RemoveMovieFromSeanceAction(cp, cv));
+		
+		actions.add(new AddCustomerToSeanceAction(cp, cv));
+		actions.add(new ShowAllReservationsAction(cp, cv));
+		actions.add(new DeleteReservationAction(cp, cv));
+		
+		actions.add(new DropDBAction(session, cp));
+		actions.add(new ExitAction(cp, cv));
 	}
 
 	private static void runAction(String name) {

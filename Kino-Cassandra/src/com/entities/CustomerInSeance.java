@@ -3,18 +3,17 @@ package com.entities;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Seance extends Entity{
-	
+public class CustomerInSeance extends Entity{
+
 	@Getter
 	@Setter
 	private Integer id;
 	
 	@Getter
 	@Setter
-	private Double priceOfTicket;
+	private Integer idCustomer;
 	
 	@Getter
 	@Setter
-	private Integer movieId;
-	
+	private Integer idSeance;
 }

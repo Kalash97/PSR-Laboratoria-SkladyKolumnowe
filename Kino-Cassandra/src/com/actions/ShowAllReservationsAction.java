@@ -1,26 +1,28 @@
 package com.actions;
 
+import java.util.List;
+
+import com.entities.CustomerInSeance;
 import com.persistence.Persistence;
 import com.view.ConsoleView;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class ExitAction implements Action{
+public class ShowAllReservationsAction implements Action{
 
 	private Persistence p;
 	private ConsoleView cv;
 	
 	@Override
 	public void launch() {
-		cv.print("closing the connection");
-		p.exitProgram();
-		System.exit(1);
+		List<String> all = p.findAll(CustomerInSeance.class);
+		cv.print(all);
 	}
 
 	@Override
 	public String getName() {
-		return "Exit";
+		return "ShowAllReservations";
 	}
 
 }

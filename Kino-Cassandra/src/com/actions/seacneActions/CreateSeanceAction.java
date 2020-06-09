@@ -22,6 +22,7 @@ public class CreateSeanceAction implements Action{
 		
 		seance.setId(id);
 		seance.setPriceOfTicket(priceOfTicket);
+		seance.setMovieId(null);
 
 		p.save(seance);
 		

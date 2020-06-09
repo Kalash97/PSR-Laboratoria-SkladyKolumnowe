@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CreateCustomerAction implements Action{
 
-//	private CqlSession session;
 	private Persistence p;
 	private ConsoleView cv;
 	

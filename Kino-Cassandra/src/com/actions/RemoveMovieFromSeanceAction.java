@@ -1,26 +1,27 @@
 package com.actions;
 
+import com.entities.Seance;
 import com.persistence.Persistence;
 import com.view.ConsoleView;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class ExitAction implements Action{
+public class RemoveMovieFromSeanceAction implements Action{
 
 	private Persistence p;
 	private ConsoleView cv;
 	
 	@Override
 	public void launch() {
-		cv.print("closing the connection");
-		p.exitProgram();
-		System.exit(1);
+		Integer id = cv.getValidInt("podaj ID seansu");
+		
+		p.update(id, Seance.class, "movieId", null);
 	}
 
 	@Override
 	public String getName() {
-		return "Exit";
+		return "RemoveMovieFromSeance";
 	}
 
 }
