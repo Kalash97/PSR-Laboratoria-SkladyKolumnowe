@@ -19,6 +19,7 @@ import com.actions.customerActions.UpdateCustomerAction;
 import com.actions.movieActions.CreateMovieAction;
 import com.actions.movieActions.DeleteMovieAction;
 import com.actions.movieActions.ShowAllMoviesAction;
+import com.actions.movieActions.ShowMovieAction;
 import com.actions.movieActions.ShowMovieByIdAction;
 import com.actions.movieActions.UpdateMovieAction;
 import com.actions.seacneActions.CreateSeanceAction;
@@ -26,7 +27,6 @@ import com.actions.seacneActions.DeleteSeanceAction;
 import com.actions.seacneActions.ShowAllSeancesAction;
 import com.actions.seacneActions.ShowSeanceByIdAction;
 import com.actions.seacneActions.UpdateSeanceAction;
-import com.datastax.oss.driver.api.core.CqlSession;
 import com.persistence.CassandraPersistence;
 import com.persistence.Persistence;
 import com.view.ConsoleView;
@@ -40,7 +40,7 @@ public class Main {
 
 		// usruchamioanie serwera z CMD: cassandra\bin\cassandra.bat
 		init();
-	
+		
 		while (true) {
 			cv.print("Lista dostêpnych akcji:");
 			showActions();
@@ -58,15 +58,14 @@ public class Main {
 		
 		Persistence cp = new CassandraPersistence();
 		
-		
 		System.out.println("connecting");
-		CqlSession session = CqlSession.builder().build();
 		
 		actions.add(new CreateMovieAction(cp, cv));
 		actions.add(new ShowAllMoviesAction(cp, cv));
 		actions.add(new ShowMovieByIdAction(cv, cp));
 		actions.add(new DeleteMovieAction(cp, cv));
 		actions.add(new UpdateMovieAction(cv, cp));
+		actions.add(new ShowMovieAction(cv, cp));
 		
 		actions.add(new CreateCustomerAction(cp, cv));
 		actions.add(new ShowAllCustomersAction(cp, cv));
@@ -87,7 +86,7 @@ public class Main {
 		actions.add(new ShowAllReservationsAction(cp, cv));
 		actions.add(new DeleteReservationAction(cp, cv));
 		
-		actions.add(new DropDBAction(session, cp));
+		actions.add(new DropDBAction(cp));
 		actions.add(new ExitAction(cp, cv));
 	}
 

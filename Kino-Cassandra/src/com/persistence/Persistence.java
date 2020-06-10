@@ -23,5 +23,7 @@ public interface Persistence{
 	boolean checkIfPresent(Integer id, Class<? extends Entity> entity);
 	
 	void exitProgram();
+
+	List<String> findBy(String column, Object value, Class<? extends Entity> entity);
 	
 }

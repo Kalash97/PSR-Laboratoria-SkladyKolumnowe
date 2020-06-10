@@ -179,6 +179,17 @@ public class CassandraPersistence implements Persistence {
 		List<String> result = buildEntityString(entity, resultSet);
 		return result.size() == 1 ? result.get(0) : "No results";
 	}
+	
+	@Override
+	public List<String> findBy(String column, Object value, Class<? extends Entity> entity) {
+
+		Select select = QueryBuilder.selectFrom(entity.getSimpleName()).all().whereColumn(column)
+				.isEqualTo(value instanceof String ? QueryBuilder.literal(value) : QueryBuilder.raw(value.toString()));
+		ResultSet resultSet = session.execute(select.allowFiltering().build().setTimeout(Duration.ofSeconds(30)));
+
+		List<String> result = buildEntityString(entity, resultSet);
+		return result;
+	}
 
 	@Override
 	public void update(Integer id, Class<? extends Entity> entity, String fieldName, Object newValue) {
@@ -204,6 +215,8 @@ public class CassandraPersistence implements Persistence {
 	public void dropDB(String name) {
 		Drop dropKeyspace = SchemaBuilder.dropKeyspace(name);
 		session.execute(dropKeyspace.build().setTimeout(Duration.ofSeconds(30)));
+		
+		exitProgram();
 	}
 
 	@Override
@@ -234,5 +247,7 @@ public class CassandraPersistence implements Persistence {
 	public void exitProgram() {
 		session.close();
 	}
+	
+	
 
 }
